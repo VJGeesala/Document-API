@@ -1,0 +1,1 @@
+A Document Store API — a REST service that stores and retrieves text documents
