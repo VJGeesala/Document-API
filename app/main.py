@@ -16,11 +16,12 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Document API",
     version="1.0.0",
-    description="Production-grade document storage API"
+    description="Production-grade document storage API",
 )
 
 # Create database tables on startup
 create_tables()
+
 
 # Middleware: attach request_id to every request
 @app.middleware("http")
@@ -35,27 +36,27 @@ async def attach_request_id(request: Request, call_next):
     # Log every request
     logger.info(
         "http_request",
-        extra={"extra_fields": {
-            "method": request.method,
-            "path": request.url.path,
-            "status_code": response.status_code,
-            "latency_ms": latency_ms,
-        }}
+        extra={
+            "extra_fields": {
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": response.status_code,
+                "latency_ms": latency_ms,
+            }
+        },
     )
 
     # Add request_id to response headers for tracing
     response.headers["X-Request-ID"] = request_id
     return response
 
+
 # Health check endpoint
 @app.get("/health")
 async def health():
     """Service health check."""
-    return {
-        "status": "healthy",
-        "env": config.app_env,
-        "version": "1.0.0"
-    }
+    return {"status": "healthy", "env": config.app_env, "version": "1.0.0"}
+
 
 # Readiness probe
 @app.get("/ready")
@@ -63,12 +64,16 @@ async def ready():
     """Check if service is ready to accept traffic."""
     try:
         from app.database import engine
+
         with engine.connect():
             pass
         return {"status": "ready"}
     except Exception as e:
-        logger.error("readiness_check_failed", extra={"extra_fields": {"error": str(e)}})
+        logger.error(
+            "readiness_check_failed", extra={"extra_fields": {"error": str(e)}}
+        )
         return JSONResponse(status_code=503, content={"status": "not ready"})
+
 
 # Register routes
 app.include_router(router)

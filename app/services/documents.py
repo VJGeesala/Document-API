@@ -3,13 +3,10 @@ from sqlalchemy.orm import Session
 from app.database import DocumentModel
 from app.models.schemas import DocumentCreate, DocumentUpdate
 
+
 def create_document(db: Session, data: DocumentCreate) -> DocumentModel:
     """Insert a new document into the database."""
-    doc = DocumentModel(
-        id=str(uuid.uuid4()),
-        title=data.title,
-        content=data.content
-    )
+    doc = DocumentModel(id=str(uuid.uuid4()), title=data.title, content=data.content)
     db.add(doc)
     db.commit()
     db.refresh(doc)
