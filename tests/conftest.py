@@ -52,6 +52,7 @@ def client(db_session):
 def api_key_headers():
     """Valid API key headers — reads from config so it works in any environment."""
     from app.config import config
+
     return {"X-API-Key": config.api_key}
 
 
