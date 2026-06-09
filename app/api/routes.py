@@ -53,7 +53,7 @@ async def create(
             }
         },
     )
-    return doc
+    return DocumentResponse.model_validate(doc)
 
 
 @router.get("/documents", response_model=PagedResponse)
@@ -65,7 +65,7 @@ async def list_all(
 ) -> PagedResponse:
     items, total = list_documents(db, page=page, page_size=page_size)
     return PagedResponse(
-        items=items,
+        items=[DocumentResponse.model_validate(item) for item in items],
         total=total,
         page=page,
         page_size=page_size,
@@ -75,12 +75,14 @@ async def list_all(
 
 @router.get("/documents/{doc_id}", response_model=DocumentResponse)
 async def get_one(
-    doc_id: str, db: Session = Depends(get_db), _: str = Depends(verify_api_key)
+    doc_id: str,
+    db: Session = Depends(get_db),
+    _: str = Depends(verify_api_key),
 ) -> DocumentResponse:
     doc = get_document(db, doc_id)
     if not doc:
         raise HTTPException(status_code=404, detail=f"Document {doc_id} not found")
-    return doc
+    return DocumentResponse.model_validate(doc)
 
 
 @router.put("/documents/{doc_id}", response_model=DocumentResponse)
@@ -93,12 +95,14 @@ async def update(
     doc = update_document(db, doc_id, data)
     if not doc:
         raise HTTPException(status_code=404, detail=f"Document {doc_id} not found")
-    return doc
+    return DocumentResponse.model_validate(doc)
 
 
 @router.delete("/documents/{doc_id}")
 async def delete(
-    doc_id: str, db: Session = Depends(get_db), _: str = Depends(verify_api_key)
+    doc_id: str,
+    db: Session = Depends(get_db),
+    _: str = Depends(verify_api_key),
 ) -> dict:
     deleted = delete_document(db, doc_id)
     if not deleted:
