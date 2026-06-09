@@ -30,6 +30,23 @@ This project is the foundation for a RAG (Retrieval-Augmented Generation) system
 
 ## Quick Start (Local Development)
 
+## Common Commands
+
+This project includes a Makefile to simplify common tasks:
+
+| Command          | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `make help`      | List all available commands                  |
+| `make setup`     | Create venv and install dependencies         |
+| `make test`      | Run all tests                                |
+| `make test-cov`  | Run tests with coverage report               |
+| `make check`     | Run all quality checks (lint + types + test) |
+| `make format`    | Auto-format code with black                  |
+| `make up`        | Start services with docker-compose           |
+| `make down`      | Stop services                                |
+| `make logs`      | Tail container logs                          |
+| `make clean`     | Remove venv, caches, and database files      |
+
 ### 1. Clone the repository
 
 ```bash
